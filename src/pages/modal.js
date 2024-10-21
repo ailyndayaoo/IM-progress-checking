@@ -1,20 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../css/modal.css';
 
 const Modal = ({ isOpen, onClose, onAddBranch, onConfirmDelete, isDeleteMode, branchName }) => {
-  const [newBranchName, setNewBranchName] = useState(branchName || '');
+  const [newBranchName, setNewBranchName] = useState('');
 
-  const handleAddBranch = async (branchName) => {
-  if (!branchName) return; // Ensure there's a name to add
-  try {
-    await axios.post('https://vynceianoani.helioho.st/branch.php', { name: branchName });
-    setBranches([...branches, { name: branchName }]); // Update state to reflect the added branch
-  } catch (error) {
-    console.error('Error adding branch:', error);
-    alert('Error adding branch. Please try again.'); // Alert if there's an error
-  }
-};
+  useEffect(() => {
+    if (isOpen) {
+      if (isDeleteMode) {
+        setNewBranchName(branchName || ''); // Set to the branch name if in delete mode
+      } else {
+        setNewBranchName(''); // Clear input for add mode
+      }
+    }
+  }, [isOpen, isDeleteMode, branchName]);
 
+  const handleAddBranch = () => {
+    if (newBranchName.trim()) {
+      onAddBranch(newBranchName);
+      setNewBranchName(''); // Clear the input field
+      onClose(); // Close the modal
+    } else {
+      alert('Branch name cannot be empty!'); // Alert if the input is empty
+    }
+  };
 
   const handleConfirmDelete = () => {
     onConfirmDelete();
@@ -37,6 +45,7 @@ const Modal = ({ isOpen, onClose, onAddBranch, onConfirmDelete, isDeleteMode, br
           </>
         ) : (
           <>
+            <h2>Add Branch</h2>
             <input
               type="text"
               value={newBranchName}
