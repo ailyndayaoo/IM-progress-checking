@@ -4,13 +4,17 @@ import '../css/modal.css';
 const Modal = ({ isOpen, onClose, onAddBranch, onConfirmDelete, isDeleteMode, branchName }) => {
   const [newBranchName, setNewBranchName] = useState(branchName || '');
 
-  const handleAddBranch = () => {
-    if (newBranchName.trim()) {
-      onAddBranch(newBranchName);
-      setNewBranchName(''); // Clear the input field
-      onClose(); // Close the modal
-    }
-  };
+  const handleAddBranch = async (branchName) => {
+  if (!branchName) return; // Ensure there's a name to add
+  try {
+    await axios.post('https://vynceianoani.helioho.st/branch.php', { name: branchName });
+    setBranches([...branches, { name: branchName }]); // Update state to reflect the added branch
+  } catch (error) {
+    console.error('Error adding branch:', error);
+    alert('Error adding branch. Please try again.'); // Alert if there's an error
+  }
+};
+
 
   const handleConfirmDelete = () => {
     onConfirmDelete();
