@@ -19,7 +19,7 @@ const Modal = ({ isOpen, onClose, onAddBranch, onConfirmDelete, isDeleteMode, br
     if (newBranchName.trim()) {
       try {
         // API call to add the branch
-        const response = await axios.post('https://vynceianoani.helioho.st/branch.php', { name: newBranchName });
+        const response = await axios.post('https://vynceianoani.helioho.st/addbranch.php', { name: newBranchName });
         
         // Call the onAddBranch callback to update the state in the parent component
         onAddBranch(response.data); // Pass the newly added branch to the parent
