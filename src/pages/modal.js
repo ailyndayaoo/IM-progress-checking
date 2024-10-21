@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios'; // Import axios for API calls
 import '../css/modal.css';
 
 const Modal = ({ isOpen, onClose, onAddBranch, onConfirmDelete, isDeleteMode, branchName }) => {
@@ -14,11 +15,20 @@ const Modal = ({ isOpen, onClose, onAddBranch, onConfirmDelete, isDeleteMode, br
     }
   }, [isOpen, isDeleteMode, branchName]);
 
-  const handleAddBranch = () => {
+  const handleAddBranch = async () => {
     if (newBranchName.trim()) {
-      onAddBranch(newBranchName);
-      setNewBranchName(''); // Clear the input field
-      onClose(); // Close the modal
+      try {
+        // API call to add the branch
+        const response = await axios.post('https://vynceianoani.helioho.st/branch.php', { name: newBranchName });
+        
+        // Call the onAddBranch callback to update the state in the parent component
+        onAddBranch(response.data); // Pass the newly added branch to the parent
+        setNewBranchName(''); // Clear the input field
+        onClose(); // Close the modal
+      } catch (error) {
+        console.error('Error adding branch:', error);
+        alert('Error adding branch, please try again.'); // Handle API error
+      }
     } else {
       alert('Branch name cannot be empty!'); // Alert if the input is empty
     }
